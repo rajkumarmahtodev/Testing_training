@@ -1,19 +1,19 @@
 Task 2 (11/09/26) - Lab 2 : Black Box Testing - BVA & ECP
 
 Q1. BVA 18-99 
-    17 i 18 v 19 v
-    98 v 99 v 100 i
+    17 invalid, 18 valid, 19 valid
+    98 valid, 99 valid, 100 invalid
 
 q2. VEC 60-100
-    59 i 60 v 80 v 101 i 100 v
+    59 invalid, 60 valid, 80 valid, 101 invalid, 100 valid
 
-    valid equivalence class  60-100
+    valid equivalence class : 60-100
 
-Q3. 4 equivalence classes
-    upto 25 y  
-    26-39 y      
-    40-64 y
-    65 and older
+Q3. 4 equivalence classes:
+    a) upto 25 y  
+    b) 26-39 y      
+    c) 40-64 y
+    d) 65 and older
   
     normal bva test values
     Boundary value

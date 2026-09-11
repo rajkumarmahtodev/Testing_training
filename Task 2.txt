@@ -1,3 +1,5 @@
+Task 2 (11/09/26) - Lab 2 : Black Box Testing - BVA & ECP
+
 Q1. BVA 18-99 
     17 i 18 v 19 v
     98 v 99 v 100 i

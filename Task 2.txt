@@ -32,7 +32,7 @@ Q4. ECP -
 
  total ecp = 5
 
-Q5.  	a) order quantity < 5 invalid
+Q5. a) order quantity < 5 invalid
 	b) 5-99 valid, no discount
 	c)  order quantity >= 100,  valid  20 % discount
   

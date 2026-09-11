@@ -1,0 +1,54 @@
+Q1. BVA 18-99 
+    17 i 18 v 19 v
+    98 v 99 v 100 i
+
+q2. VEC 60-100
+    59 i 60 v 80 v 101 i 100 v
+
+    valid equivalence class  60-100
+
+Q3. 4 equivalence classes
+    upto 25 y  
+    26-39 y      
+    40-64 y
+    65 and older
+  
+    normal bva test values
+    Boundary value
+    25       24,25,26
+    40       39,40,41
+    65       64,65,66
+
+    bva test cases - 24,25,26,39,40,41,64,65,66
+
+Q4. ECP -
+    a) age < 8 (eligible)
+    b) 8-35  (ineligible)
+    c) age > 35 and < 45 (eligible)
+    d) 45-60 (ineligible)
+    e) age > 60 (eligible)
+
+ total ecp = 5
+
+Q5.  	a) order quantity < 5 invalid
+	b) 5-99 valid, no discount
+	c)  order quantity >= 100,  valid  20 % discount
+  
+	test cases - 4 i, 5 v no dis, 50 v no dis, 99 v no dis, 100 v discount, 101 v discount. 
+
+	Total equivalence classes = 3
+
+Q6.   
+	length < 2 years : 0 % bonus
+	length > 2 and < 5  : 10 % bonus
+    	5-10  : 25% bonus
+	length >= 10  : 25 %
+
+	Total ECP  -
+ 	   EC1 :  < 0           invalid
+	   EC2 :  0-2           0 % bonus
+	   EC3 :  >2 and <5     10 % bonus
+	   EC4 :  5-10          25 % bonus
+	   EC5 :  >=10          35 % bonus
+    
+	Total ECP = 5

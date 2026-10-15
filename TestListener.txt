@@ -1,0 +1,131 @@
+package listeners;
+
+import base.BaseTest;
+import com.aventstack.extentreports.Status;
+import org.testng.ITestContext;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+import utilities.ReportManager;
+import utilities.ScreenshotUtil;
+
+public class TestListener
+        implements ITestListener {
+
+
+    @Override
+    public void onStart(ITestContext context) {
+
+        ReportManager.startReport();
+    }
+
+
+    @Override
+    public void onTestStart(
+            ITestResult result) {
+
+        String testName =
+                result.getMethod()
+                        .getMethodName();
+
+        ReportManager.createTest(testName);
+
+        ReportManager.getTest()
+                .log(
+                        Status.INFO,
+                        "Test started"
+                );
+    }
+
+
+    @Override
+    public void onTestSuccess(
+            ITestResult result) {
+
+        ReportManager.getTest()
+                .log(
+                        Status.PASS,
+                        "Test Passed"
+                );
+
+        takeScreenshot(result);
+    }
+
+
+    @Override
+    public void onTestFailure(
+            ITestResult result) {
+
+        ReportManager.getTest()
+                .log(
+                        Status.FAIL,
+                        "Test Failed"
+                );
+
+        if (result.getThrowable() != null) {
+
+            ReportManager.getTest()
+                    .log(
+                            Status.FAIL,
+                            result.getThrowable()
+                    );
+        }
+
+        takeScreenshot(result);
+    }
+
+
+    @Override
+    public void onTestSkipped(
+            ITestResult result) {
+
+        ReportManager.getTest()
+                .log(
+                        Status.SKIP,
+                        "Test Skipped"
+                );
+    }
+
+
+    @Override
+    public void onFinish(
+            ITestContext context) {
+
+        ReportManager.flushReport();
+    }
+
+
+    private void takeScreenshot(
+            ITestResult result) {
+
+        Object testInstance =
+                result.getInstance();
+
+        if (testInstance instanceof BaseTest) {
+
+            BaseTest baseTest =
+                    (BaseTest) testInstance;
+
+            String path =
+                    ScreenshotUtil.takeScreenshot(
+                            baseTest.driver,
+                            result.getMethod()
+                                    .getMethodName()
+                    );
+
+            if (path != null) {
+
+                try {
+
+                    ReportManager.getTest()
+                            .addScreenCaptureFromPath(
+                                    path
+                            );
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+package tests;
+
+import base.BaseTest;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import pages.SearchPage;
+
+public class SearchTest extends BaseTest {
+
+    private SearchPage searchPage;
+
+    @BeforeMethod
+    public void initializePage() {
+
+        searchPage =
+                new SearchPage(driver);
+    }
+
+    // TC_SEARCH_001
+
+    // TC_SEARCH_002
+
+    // TC_SEARCH_003
+
+    // ...
+
+    // TC_SEARCH_028
+s}

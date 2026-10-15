@@ -1,0 +1,473 @@
+package tests;
+
+import base.BaseTest;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import pages.SearchPage;
+
+public class SearchTest extends BaseTest {
+
+    private SearchPage searchPage;
+
+    @BeforeMethod
+    public void initializePage() {
+        searchPage = new SearchPage(driver);
+    }
+
+
+    // ============================================================
+    // US01 - Search Bar / Basic Search
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_001_VerifySearchBarIsDisplayed() {
+
+        searchPage.openSearchPage();
+
+        Assert.assertTrue(
+                searchPage.isSearchBoxDisplayed(),
+                "Search box should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_002_VerifySearchBarCanBeClicked() {
+
+        searchPage.openSearchPage();
+
+        searchPage.clickSearchBox();
+
+        Assert.assertTrue(
+                searchPage.isSearchBoxDisplayed(),
+                "Search box should be clickable"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_003_SearchValidFoodItem() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Search results should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_004_SearchUsingEnterKey() {
+
+        searchPage.openSearchPage();
+
+        searchPage.typeSearchKeyword("burger");
+
+        searchPage.enterSearchKeyword("burger");
+
+        Assert.assertTrue(
+                searchPage.urlContains("q="),
+                "Search URL should contain search query"
+        );
+    }
+
+
+    // ============================================================
+    // US02 - Partial / Short / Mixed Case Search
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_005_SearchUsingPartialKeyword() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burg");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Partial keyword should return results"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_006_SearchUsingShortKeyword() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("bu");
+
+        Assert.assertTrue(
+                searchPage.getCurrentUrl().contains("q="),
+                "Search should be performed with short keyword"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_007_SearchUsingMixedCaseKeyword() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("BuRgEr");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Search should work with mixed-case keyword"
+        );
+    }
+
+
+    // ============================================================
+    // US03 - Relevant Search Results
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_008_VerifyRelevantPaneerResults() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("paneer");
+
+        Assert.assertTrue(
+                searchPage.isSearchResultDisplayed("paneer"),
+                "Paneer should be present in search results"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_009_VerifyRelevantChickenResults() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("chicken");
+
+        Assert.assertTrue(
+                searchPage.isSearchResultDisplayed("chicken"),
+                "Chicken should be present in search results"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_010_VerifySearchResultsCount() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        int count = searchPage.getNumberOfProducts();
+
+        Assert.assertTrue(
+                count > 0,
+                "At least one search result should be displayed"
+        );
+    }
+
+
+    // ============================================================
+    // US04 - No Search Results
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_011_SearchInvalidFoodName() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("xyzfood12345");
+
+        Assert.assertTrue(
+                searchPage.isNoResultsMessageDisplayed()
+                        || !searchPage.hasProducts(),
+                "Invalid food search should not display products"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_012_SearchRandomCharacters() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("@@@###999");
+
+        Assert.assertTrue(
+                searchPage.isNoResultsMessageDisplayed()
+                        || !searchPage.hasProducts(),
+                "Random characters should not return products"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_013_SearchNonExistingProduct() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword(
+                "nonexistingproduct987654"
+        );
+
+        Assert.assertTrue(
+                searchPage.isNoResultsMessageDisplayed()
+                        || !searchPage.hasProducts(),
+                "Non-existing product should not return products"
+        );
+    }
+
+
+    // ============================================================
+    // US05 - Clear Search
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_014_ClearSearchKeyword() {
+
+        searchPage.openSearchPage();
+
+        searchPage.typeSearchKeyword("burger");
+
+        Assert.assertEquals(
+                searchPage.getSearchValue(),
+                "burger"
+        );
+
+        searchPage.clearSearch();
+
+        Assert.assertTrue(
+                searchPage.getSearchValue().isEmpty(),
+                "Search box should be cleared"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_015_ClearAndSearchAgain() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clearSearch();
+
+        searchPage.enterSearchKeyword("chicken");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "New search should return results"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_016_VerifyEmptySearch() {
+
+        searchPage.openSearchPage();
+
+        searchPage.clickSearchBox();
+
+        searchPage.clearSearch();
+
+        Assert.assertTrue(
+                searchPage.getSearchValue().isEmpty(),
+                "Search field should remain empty"
+        );
+    }
+
+
+    // ============================================================
+    // US06 - Veg / Non-Veg Filters
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_017_VerifyVegFilterDisplayed() {
+
+        searchPage.openSearchPage();
+
+        Assert.assertTrue(
+                searchPage.isVegFilterDisplayed(),
+                "Veg filter should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_018_VerifyNonVegFilterDisplayed() {
+
+        searchPage.openSearchPage();
+
+        Assert.assertTrue(
+                searchPage.isNonVegFilterDisplayed(),
+                "Non-Veg filter should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_019_ClickVegFilter() {
+
+        searchPage.openSearchPage();
+
+        searchPage.clickVegFilter();
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Veg filter should display products"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_020_ClickNonVegFilter() {
+
+        searchPage.openSearchPage();
+
+        searchPage.clickNonVegFilter();
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Non-Veg filter should display products"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_021_SearchAndApplyVegFilter() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clickVegFilter();
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Veg filtered search should display products"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_022_SearchAndApplyNonVegFilter() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clickNonVegFilter();
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Non-Veg filtered search should display products"
+        );
+    }
+
+
+    // ============================================================
+    // US07 - Food Item Details
+    // ============================================================
+
+    @Test
+    public void TC_SEARCH_023_VerifyFoodItemsDisplayed() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Food items should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_024_VerifyFoodItemCount() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        Assert.assertTrue(
+                searchPage.getNumberOfProducts() > 0,
+                "Food item count should be greater than zero"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_025_ClickFoodItem() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clickFirstProduct();
+
+        Assert.assertTrue(
+                searchPage.getCurrentUrl().contains("mcdelivery"),
+                "User should navigate to food item"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_026_VerifyFoodItemDetailsPage() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clickFirstProduct();
+
+        Assert.assertTrue(
+                searchPage.isProductDetailsPageDisplayed(),
+                "Food item details page should be displayed"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_027_VerifyFoodItemDetailsURL() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        searchPage.clickFirstProduct();
+
+        String currentUrl =
+                searchPage.getCurrentUrl();
+
+        Assert.assertTrue(
+                currentUrl.contains("mcdelivery.co.in"),
+                "URL should belong to McDelivery"
+        );
+    }
+
+
+    @Test
+    public void TC_SEARCH_028_SearchFoodAndOpenDetails() {
+
+        searchPage.openSearchPage();
+
+        searchPage.enterSearchKeyword("burger");
+
+        Assert.assertTrue(
+                searchPage.hasProducts(),
+                "Search should return food items"
+        );
+
+        searchPage.clickFirstProduct();
+
+        Assert.assertTrue(
+                searchPage.isProductDetailsPageDisplayed(),
+                "Food item details should be displayed"
+        );
+    }
+}

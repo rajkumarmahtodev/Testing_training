@@ -1,0 +1,70 @@
+package utilities;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
+public class ReportManager {
+
+    private static ExtentReports extent;
+
+    private static ThreadLocal<ExtentTest> test =
+            new ThreadLocal<>();
+
+
+    public static void startReport() {
+
+        ExtentSparkReporter spark =
+                new ExtentSparkReporter(
+                        "reports/SearchAutomationReport.html"
+                );
+
+        extent = new ExtentReports();
+
+        extent.attachReporter(spark);
+
+        extent.setSystemInfo(
+                "Project",
+                "McDelivery Search Automation"
+        );
+
+        extent.setSystemInfo(
+                "Module",
+                "Search"
+        );
+
+        extent.setSystemInfo(
+                "Browser",
+                "Chrome"
+        );
+
+        extent.setSystemInfo(
+                "Automation",
+                "Selenium + Java + TestNG"
+        );
+    }
+
+
+    public static void createTest(
+            String testName) {
+
+        test.set(
+                extent.createTest(testName)
+        );
+    }
+
+
+    public static ExtentTest getTest() {
+
+        return test.get();
+    }
+
+
+    public static void flushReport() {
+
+        if (extent != null) {
+
+            extent.flush();
+        }
+    }
+}

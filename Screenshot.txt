@@ -1,0 +1,57 @@
+package utilities;
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+public class ScreenshotUtil {
+
+    public static String takeScreenshot(
+            WebDriver driver,
+            String testName) {
+
+        try {
+
+            if (driver == null) {
+                return null;
+            }
+
+            File source =
+                    ((TakesScreenshot) driver)
+                            .getScreenshotAs(
+                                    OutputType.FILE
+                            );
+
+            String directory = "screenshots";
+
+            Files.createDirectories(
+                    Path.of(directory)
+            );
+
+            String filePath =
+                    directory
+                    + File.separator
+                    + testName
+                    + ".png";
+
+            Files.copy(
+                    source.toPath(),
+                    Path.of(filePath),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            return filePath;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+}

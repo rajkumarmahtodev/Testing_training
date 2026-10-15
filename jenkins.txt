@@ -1,0 +1,81 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                echo 'Starting McDelivery Search Automation'
+
+            }
+        }
+
+
+        stage('Build') {
+
+            steps {
+
+                echo 'Building Maven project'
+
+                bat 'mvn clean compile test-compile'
+
+            }
+        }
+
+
+        stage('Run 28 Selenium Tests') {
+
+            steps {
+
+                echo 'Running all 28 Search test cases'
+
+                bat 'mvn test'
+
+            }
+        }
+    }
+
+
+    post {
+
+        always {
+
+            echo 'Publishing test results'
+
+
+            junit(
+                allowEmptyResults: true,
+                testResults: 'target/surefire-reports/*.xml'
+            )
+
+
+            archiveArtifacts(
+                artifacts: 'screenshots/*.png',
+                allowEmptyArchive: true
+            )
+
+
+            archiveArtifacts(
+                artifacts: 'reports/*.html',
+                allowEmptyArchive: true
+            )
+        }
+
+
+        success {
+
+            echo 'Automation execution completed successfully'
+
+        }
+
+
+        failure {
+
+            echo 'One or more Selenium tests failed'
+
+        }
+    }
+}
